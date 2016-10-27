@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;gef-container-server&gt;">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gvm/pkgsets/go1.6.2/global/src/golang.org" />
+      <root url="file://$USER_HOME$/.gvm/pkgsets/go1.6.2/global/src/github.com" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/.gvm/pkgsets/go1.6.2/global/src/golang.org" />
+      <root url="file://$USER_HOME$/.gvm/pkgsets/go1.6.2/global/src/github.com" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
