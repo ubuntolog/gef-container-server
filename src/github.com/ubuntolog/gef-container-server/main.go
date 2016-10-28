@@ -9,23 +9,33 @@ import (
 	"time"
 	"io/ioutil"
 	"encoding/json"
+	"bytes"
+	"io"
+	"os"
 )
 
 // Volume folder content
 type VolumeItem struct {
-	Name       string
-	Size	   int64
-	Modified   time.Time
-	IsFolder   bool
-	FolderTree VolumeItems
+	Name       string `json:"name"`
+	Size	   int64 `json:"size"`
+	Modified   time.Time `json:"modified"`
+	IsFolder   bool `json:"isFolder"`
+	FolderTree VolumeItems `json:"folderTree"`
 }
 
 type VolumeItems []VolumeItem
 
+type JReply struct {
+	Message string `json:"message"`
+}
+
+type JPost struct {
+	FolderPath string `json:"folderPath"`
+}
+
 func readFolders(currentFolder string, volumeItems VolumeItems) VolumeItems {
 	files, _ := ioutil.ReadDir(currentFolder)
 	for _, f := range files {
-		//fmt.Println(f.Name())
 		subFolderItems := VolumeItems{}
 		if f.IsDir() == true {
 			subFolderItems = readFolders(currentFolder + "/" + f.Name(), VolumeItems{})
@@ -36,29 +46,52 @@ func readFolders(currentFolder string, volumeItems VolumeItems) VolumeItems {
 }
 
 func main() {
-
 	router := mux.NewRouter().StrictSlash(true)
 	router.HandleFunc("/", Index)
-	router.HandleFunc("/todos", TodoIndex)
-	router.HandleFunc("/todos/{todoId}", TodoShow)
+	router.HandleFunc("/ls", doLsRecursively).Methods("POST")
+	router.HandleFunc("/post", doExamplePost)
 
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {
-	//fmt.Fprintln(w, "Welcome!")
-
 	emptyItems := VolumeItems{}
 	volumeItems := readFolders("/Users/megalex/dirlist", emptyItems)
 	json.NewEncoder(w).Encode(volumeItems)
 }
 
-func TodoIndex(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Todo Index!")
+func doLsRecursively(w http.ResponseWriter, r *http.Request) {
+	folderPath := ""
+	// Form was POSTed
+	if r.FormValue("folderPath") != "" {
+		folderPath = r.FormValue("folderPath")
+	} else { // JSON was POSTed
+		var incomingData JPost
+		if r.Body == nil {
+			json.NewEncoder(w).Encode(JReply{Message: "Please send a request body"})
+			return
+		}
+		err := json.NewDecoder(r.Body).Decode(&incomingData)
+		if err != nil {
+			json.NewEncoder(w).Encode(JReply{Message: err.Error()})
+			return
+		}
+		folderPath = incomingData.FolderPath
+	}
+	fmt.Println(folderPath)
+	if folderPath == "" {
+		json.NewEncoder(w).Encode(JReply{Message: "The path has not been specified"})
+		return
+	} else {
+		JFolderList := readFolders(folderPath, VolumeItems{})
+		json.NewEncoder(w).Encode(JFolderList)
+	}
 }
 
-func TodoShow(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	todoId := vars["todoId"]
-	fmt.Fprintln(w, "Todo show:", todoId)
+func doExamplePost(w http.ResponseWriter, r *http.Request) {
+	u := JPost{FolderPath: "/Users/megalex/m"}
+	b := new(bytes.Buffer)
+	json.NewEncoder(b).Encode(u)
+	res, _ := http.Post("http://localhost:8080/ls", "application/json; charset=utf-8", b)
+	io.Copy(os.Stdout, res.Body)
 }

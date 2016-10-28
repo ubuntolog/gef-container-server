@@ -27,10 +27,10 @@
       <file leaf-file-name="main.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/github.com/ubuntolog/gef-container-server/main.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
+            <state relative-caret-position="207">
+              <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
               <folding>
-                <element signature="e#14#115#0" expanded="true" />
+                <element signature="e#14#136#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -86,8 +86,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="69" />
-    <option name="y" value="132" />
+    <option name="x" value="168" />
+    <option name="y" value="100" />
     <option name="width" value="1860" />
     <option name="height" value="1002" />
   </component>
@@ -503,6 +503,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="dd5b1fbf-002f-4224-811f-c535930f4d10" name="Default" comment="" />
@@ -514,7 +517,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="69" y="132" width="1860" height="1002" extended-state="0" />
+    <frame x="168" y="100" width="1860" height="1002" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -584,10 +587,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/github.com/ubuntolog/gef-container-server/main.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
+        <state relative-caret-position="207">
+          <caret line="47" column="13" selection-start-line="47" selection-start-column="13" selection-end-line="47" selection-end-column="13" />
           <folding>
-            <element signature="e#14#115#0" expanded="true" />
+            <element signature="e#14#136#0" expanded="true" />
           </folding>
         </state>
       </provider>
