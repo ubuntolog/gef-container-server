@@ -23,13 +23,14 @@ func init() {
 }
 
 func TestCreateUser(t *testing.T) {
-	userJson := `{"folderPath": "sdsdsdsd"}`
+	userJson := `{"folderPath": "/Users/megalex/empty"}`
 
 	reader = strings.NewReader(userJson) //Convert string to reader
 
 	request, err := http.NewRequest("POST", usersUrl, reader) //Create request with JSON body
 
 	res, err := http.DefaultClient.Do(request)
+	fmt.Println(usersUrl)
 
 	if err != nil {
 		t.Error(err) //Something is wrong while sending request

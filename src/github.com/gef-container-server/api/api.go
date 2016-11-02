@@ -1,9 +1,7 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
-
 	"github.com/gorilla/mux"
 	"time"
 	"io/ioutil"
@@ -11,6 +9,8 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"github.com/Sirupsen/logrus"
+	"log"
 )
 
 // Volume folder content
@@ -33,14 +33,18 @@ type JPost struct {
 }
 
 func readFolders(currentFolder string, volumeItems VolumeItems) VolumeItems {
-	files, _ := ioutil.ReadDir(currentFolder)
-	for _, f := range files {
-		subFolderItems := VolumeItems{}
-		if f.IsDir() == true {
-			subFolderItems = readFolders(currentFolder + "/" + f.Name(), VolumeItems{})
+	ifExists, _ := exists(currentFolder)
+	if ifExists == true {
+		files, _ := ioutil.ReadDir(currentFolder)
+		for _, f := range files {
+			subFolderItems := VolumeItems{}
+			if f.IsDir() == true {
+				subFolderItems = readFolders(currentFolder + "/" + f.Name(), VolumeItems{})
+			}
+			volumeItems = append(volumeItems, VolumeItem{Name: f.Name(), Size: f.Size(), Modified: f.ModTime(), IsFolder:f.IsDir(), FolderTree: subFolderItems})
 		}
-		volumeItems = append(volumeItems, VolumeItem{Name: f.Name(), Size: f.Size(), Modified: f.ModTime(), IsFolder:f.IsDir(), FolderTree: subFolderItems})
 	}
+
 	return volumeItems
 }
 
@@ -50,6 +54,7 @@ func Handlers() *mux.Router {
 	router.HandleFunc("/", Index)
 	router.HandleFunc("/ls", doLsRecursively).Methods("POST")
 	router.HandleFunc("/post", doExamplePost)
+	logrus.Info("Starting server...")
 	return router
 	//log.Fatal(http.ListenAndServe(":8080", router))
 }
@@ -60,7 +65,15 @@ func Index(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(volumeItems)
 }
 
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil { return true, nil }
+	if os.IsNotExist(err) { return false, nil }
+	return true, err
+}
+
 func doLsRecursively(w http.ResponseWriter, r *http.Request) {
+
 	folderPath := ""
 	// Form was POSTed
 	if r.FormValue("folderPath") != "" {
@@ -78,13 +91,30 @@ func doLsRecursively(w http.ResponseWriter, r *http.Request) {
 		}
 		folderPath = incomingData.FolderPath
 	}
-	fmt.Println(folderPath)
+
 	if folderPath == "" {
-		json.NewEncoder(w).Encode(JReply{Message: "The path has not been specified"})
-		return
+		w.WriteHeader(http.StatusBadRequest)
+		msgText := "The path has not been specified"
+		json.NewEncoder(w).Encode(JReply{Message: msgText})
+		log.Fatal(msgText)
 	} else {
-		JFolderList := readFolders(folderPath, VolumeItems{})
-		json.NewEncoder(w).Encode(JFolderList)
+		logrus.Info("Trying to read folder '" + folderPath + "'")
+		ifExists, _ := exists(folderPath)
+		if ifExists == true {
+			w.WriteHeader(http.StatusCreated)
+			JFolderList := readFolders(folderPath, VolumeItems{})
+			json.NewEncoder(w).Encode(JFolderList)
+			logrus.Info("Success")
+		} else {
+			msgText := "The path does not exist"
+			w.WriteHeader(http.StatusBadRequest)
+			json.NewEncoder(w).Encode(JReply{Message: msgText})
+			logrus.Info(msgText)
+		}
+
+
+
+
 	}
 }
 
