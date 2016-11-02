@@ -1,8 +1,7 @@
-package main
+package api
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -45,13 +44,14 @@ func readFolders(currentFolder string, volumeItems VolumeItems) VolumeItems {
 	return volumeItems
 }
 
-func main() {
-	router := mux.NewRouter().StrictSlash(true)
+func Handlers() *mux.Router {
+	//router := mux.NewRouter().StrictSlash(true)
+	router := mux.NewRouter()
 	router.HandleFunc("/", Index)
 	router.HandleFunc("/ls", doLsRecursively).Methods("POST")
 	router.HandleFunc("/post", doExamplePost)
-
-	log.Fatal(http.ListenAndServe(":8080", router))
+	return router
+	//log.Fatal(http.ListenAndServe(":8080", router))
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {

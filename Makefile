@@ -10,7 +10,7 @@ gef-container-server-linux: $(SOURCES)
 	# go test ./...
 	cd ./src
 # install the bin
-	GOOS=linux GOARCH=amd64 go install github.com/ubuntolog/gef-container-server
+	GOOS=linux GOARCH=amd64 go install github.com/gef-container-server
 
 gef-container-server: $(SOURCES)
 	#golint ./...
@@ -19,7 +19,7 @@ gef-container-server: $(SOURCES)
 	cd ./src
 
 # install the bin
-	go install github.com/ubuntolog/gef-container-server
+	go install github.com/gef-container-server
 
 
 clean:
